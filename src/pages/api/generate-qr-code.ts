@@ -16,7 +16,7 @@ export default async function generateQrCode(
   // Learn more: https://0xpolygonid.github.io/tutorials/verifier/verification-library/request-api-guide/#createauthorizationrequest
   const request = auth.createAuthorizationRequest(
     // Reason for the authorization request
-    "Must be born before this year",
+    "Must be part of the DAO",
 
     // Polygon ID of the requester
     process.env.NEXT_PUBLIC_SENDER_DID as string,
@@ -45,17 +45,19 @@ export default async function generateQrCode(
       circuitId: "credentialAtomicQuerySigV2",
       query: {
         allowedIssuers: ["*"],
-        type: "KYCAgeCredential",
-        context:
-          "https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld",
+        type: "daoCredential",
+        context: "https://raw.githubusercontent.com/sandragcarrillo/schema/main/role.json-ld",
         credentialSubject: {
-          birthday: {
-            $lt: 20230101, // Birthday must be less than this date.
+          roleId: {
+            $in: [
+              1
+            ]
           },
         },
       },
     },
   ];
+
 
   // Store the request in the Polybase database
   const db = new Polybase({
